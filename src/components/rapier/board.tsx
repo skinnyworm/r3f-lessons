@@ -1,58 +1,52 @@
 "use client";
 
-import { Box, OrbitControls, useHelper } from "@react-three/drei";
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Physics, quat, RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { RefObject, Suspense, useRef, useState } from "react";
+import {
+  KeyboardControls,
+  KeyboardControlsEntry,
+  OrbitControls,
+  useHelper,
+} from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { Physics } from "@react-three/rapier";
+import { RefObject, Suspense, useRef } from "react";
 import * as THREE from "three";
+import { Block } from "./block";
+import { Floor } from "./floor";
+import { Kicker } from "./kicker";
+
+const controlMap: KeyboardControlsEntry[] = [
+  { name: "move", keys: ["W", "A", "S", "D"] },
+  { name: "jump", keys: ["Space"] },
+  { name: "reset", keys: ["R"] },
+];
 
 export function Board() {
   return (
-    <Canvas
-      shadows
-      camera={{ fov: 30, position: [10, 10, 10] }}
-      shadow-map={[256, 256]}
-    >
-      <color attach="background" args={["#87CEEB"]} />
-      <Suspense>
-        <Physics debug>
+    <KeyboardControls map={controlMap}>
+      <Canvas
+        shadows
+        camera={{ fov: 30, position: [10, 10, 10] }}
+        shadow-map={[256, 256]}
+      >
+        <color attach="background" args={["#87CEEB"]} />
+        <Suspense>
           <Scene />
-        </Physics>
-      </Suspense>
-    </Canvas>
+        </Suspense>
+      </Canvas>
+    </KeyboardControls>
   );
 }
 
 const Scene = () => {
-  const [hover, setHover] = useState<Boolean>(false);
   const dlRef = useRef<THREE.DirectionalLight>(null);
-  const cubeRef = useRef<RapierRigidBody>(null);
-  const kicker = useRef<RapierRigidBody>(null);
-
-  const jump = () => {
-    const body = cubeRef.current!;
-    body.applyImpulse({ x: 0, y: 5, z: 0 }, true);
-  };
-
   useHelper(
     dlRef as RefObject<THREE.Object3D>,
     THREE.DirectionalLightHelper,
     1,
     "red"
   );
-
-  useFrame((_, delta) => {
-    const currentRotation = quat(kicker.current!.rotation());
-    const incrementRotation = new THREE.Quaternion().setFromAxisAngle(
-      new THREE.Vector3(0, 1, 0),
-      delta * 1.5
-    );
-    currentRotation.multiply(incrementRotation);
-    kicker.current!.setNextKinematicRotation(currentRotation);
-  });
-
   return (
-    <>
+    <Physics debug>
       <ambientLight intensity={0.5} />
       <directionalLight
         ref={dlRef}
@@ -61,31 +55,10 @@ const Scene = () => {
         castShadow
       />
       <OrbitControls />
-
-      <RigidBody position={[-4, 1, 0]} colliders="cuboid" ref={cubeRef}>
-        <Box
-          onPointerOver={() => setHover(true)}
-          onPointerOut={() => setHover(false)}
-          onClick={() => jump()}
-          castShadow
-        >
-          <meshStandardMaterial color={hover ? "hotpink" : "royalblue"} />
-        </Box>
-      </RigidBody>
-
-      <RigidBody ref={kicker} type="kinematicPosition" position={[0, 0.75, 0]}>
-        <group position={[2.5, 0, 0]}>
-          <Box args={[5, 0.5, 0.5]}>
-            <meshStandardMaterial color="peachpuff" />
-          </Box>
-        </group>
-      </RigidBody>
-
-      <RigidBody type="fixed" friction={2}>
-        <Box position={[0, 0, 0]} args={[10, 0.5, 10]} receiveShadow>
-          <meshStandardMaterial color="springgreen" />
-        </Box>
-      </RigidBody>
-    </>
+      <Block />
+      <Kicker />
+      <Floor />
+      {/* <Helper type={THREE.DirectionalLightHelper} args={[1, "red"]} /> */}
+    </Physics>
   );
 };
