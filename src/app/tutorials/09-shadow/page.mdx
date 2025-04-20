@@ -5,8 +5,10 @@ import { Demo } from './components/demo';
 We are going to use react-three-fiber to create a simple scene with a box and a plane. The box will cast a shadow on the plane, 
 and the plane will receive the shadow. We will also add some lights to the scene to make it look more realistic.
 
-```javascript
+```tsx
+
 type THREE3DObjectRef = React.RefObject<THREE.Object3D>;
+
 const Scene = () => {
   const pointLightRef = useRef<THREE.PointLight | null>(null);
   useHelper(pointLightRef as THREE3DObjectRef, THREE.PointLightHelper, 0.2, "red");
