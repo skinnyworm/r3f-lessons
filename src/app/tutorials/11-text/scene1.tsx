@@ -1,18 +1,27 @@
 "use client";
 
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Box, Center, FontData, OrbitControls, Text3D } from "@react-three/drei";
+import {
+  Box,
+  Center,
+  FontData,
+  OrbitControls,
+  Text3D,
+} from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 
 export default function Scene() {
+  const content = `Lorem ipsum dolor sit amet,
+consectetur adipiscing elit.`;
   return (
     <AspectRatio ratio={16 / 9} className="bg-muted">
       <Canvas camera={{ position: [-5, 5, 5], fov: 45 }} shadows>
         <color attach="background" args={["#000"]} />
+        <axesHelper />
         <OrbitControls />
-        <Box>
+        {/* <Box>
           <meshNormalMaterial />
-        </Box>
+        </Box> */}
 
         <Center>
           <Text3D
@@ -26,7 +35,7 @@ export default function Scene() {
             bevelOffset={0}
             bevelSegments={5}
           >
-            Hello World
+            {content}
             <meshNormalMaterial />
           </Text3D>
         </Center>
