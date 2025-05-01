@@ -1,6 +1,7 @@
 import { Example1 } from './example1'
 import { Example2 } from './example2'
 import Example3 from './example3'
+import Example4 from './example4'
 
 Loading 3D Models
 =================
@@ -226,4 +227,8 @@ export const Fox = () => {
   return <primitive object={fox.scene} scale={0.02} position={[0, 0, 0]} rotation-y={0.3} />;
 };
 useGLTF.preload("/Fox/glTF/Fox.gltf");
-````
+```
+
+### End to end example
+
+<Example4/>
