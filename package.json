@@ -21,6 +21,7 @@
     "@react-three/rapier": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
+    "lamina": "^1.1.23",
     "leva": "^0.10.0",
     "lodash": "^4.17.21",
     "lucide-react": "^0.487.0",

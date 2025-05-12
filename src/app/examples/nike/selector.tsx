@@ -13,18 +13,13 @@ export const Selector = ({ children }: { children: ReactNode }) => {
     const { width, height } = viewport.getCurrentViewport(camera, [0, 0, 3]);
     const mesh = ref.current!;
     const material = mesh.material as THREE.MeshStandardMaterial;
-    easing.damp3(
-      mesh.position,
-      [(pointer.x * width) / 2, (pointer.y * height) / 2, 3],
-      open ? 0 : 0.1,
-      dt
-    );
+    easing.damp3(mesh.position, [(pointer.x * width) / 2, (pointer.y * height) / 2, 3], open ? 0 : 0.1, dt);
     easing.damp3(mesh.scale, open ? 4 : 0.01, open ? 0.5 : 0.2, dt);
     easing.dampC(material.color, open ? "#f0f0f0" : "#ccc", 0.1, dt);
   });
   return (
     <Fragment>
-      <mesh ref={ref}>
+      <mesh ref={ref} scale={0.01}>
         <circleGeometry args={[1, 64, 64]} />
         <MeshTransmissionMaterial
           samples={16}
@@ -35,10 +30,7 @@ export const Selector = ({ children }: { children: ReactNode }) => {
           toneMapped={true}
         />
       </mesh>
-      <group
-        onPointerOver={() => setOpen(true)}
-        onPointerOut={() => setOpen(false)}
-      >
+      <group onPointerOver={() => setOpen(true)} onPointerOut={() => setOpen(false)}>
         {children}
       </group>
     </Fragment>

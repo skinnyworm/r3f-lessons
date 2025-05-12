@@ -16,6 +16,11 @@ const examples = [
     description: "A glossy glass.",
     href: "/examples/nike",
   },
+  {
+    title: "Porsche",
+    description: "Env map example.",
+    href: "/examples/env-map",
+  },
 ];
 
 const tutorials = [
@@ -45,10 +50,7 @@ export default function Home() {
           <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             {tutorials.map((tutorial) => (
               <li key={tutorial.title}>
-                <Link
-                  href={tutorial.href}
-                  className="block border p-2 rounded-md hover:bg-gray-100"
-                >
+                <Link href={tutorial.href} className="block border p-2 rounded-md hover:bg-gray-100">
                   <h3 className="text-lg font-bold">{tutorial.title}</h3>
                   <p>{tutorial.description}</p>
                 </Link>
@@ -59,10 +61,7 @@ export default function Home() {
           <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
             {examples.map((example) => (
               <li key={example.title}>
-                <Link
-                  href={example.href}
-                  className="block border p-2 rounded-md hover:bg-gray-100"
-                >
+                <Link href={example.href} className="block border p-2 rounded-md hover:bg-gray-100">
                   <h3 className="text-lg font-bold">{example.title}</h3>
                   <p>{example.description}</p>
                 </Link>

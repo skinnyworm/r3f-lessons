@@ -9,9 +9,7 @@ import { createServerSearchParamsForServerPage } from "next/dist/server/request/
 
 const GOLDENRATIO = 1.61803398875;
 
-type Rotation =
-  | THREE.Euler
-  | [x: number, y: number, z: number, order?: THREE.EulerOrder | undefined];
+type Rotation = THREE.Euler | [x: number, y: number, z: number, order?: THREE.EulerOrder | undefined];
 
 const pexel = (id: number) =>
   `https://images.pexels.com/photos/${id}/pexels-photo-${id}.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=750&w=1260`;
@@ -107,17 +105,17 @@ export const Frames = () => {
   const gotoObject = (name: string | null) => {
     const group = groupRef.current!;
     if (name == null) {
-      const p = new THREE.Vector3(0, 0, 5.5);
-      const q = new THREE.Quaternion(0, 0, 0, 1);
-      locationRef.current = { p: new THREE.Vector3(0, 0, 5.5), q: q };
+      locationRef.current = {
+        p: new THREE.Vector3(0, 0, 5.5),
+        q: new THREE.Quaternion(0, 0, 0, 1),
+      };
     } else {
       const parent = group.getObjectByName(name)?.parent!;
-      const p = new THREE.Vector3(0, GOLDENRATIO / 2, 1.25);
-      const q = new THREE.Quaternion(0, 0, 0, 1);
       parent.updateWorldMatrix(true, true);
-      parent.localToWorld(p.set(0, GOLDENRATIO / 2, 1.25));
-      parent.getWorldQuaternion(q);
-      locationRef.current = { p, q };
+      locationRef.current = {
+        p: parent.localToWorld(new THREE.Vector3(0, GOLDENRATIO / 2, 1.25)),
+        q: parent.getWorldQuaternion(new THREE.Quaternion(0, 0, 0, 1)),
+      };
     }
   };
 
@@ -147,13 +145,11 @@ const Frame = ({
   position,
   rotation,
   url,
-  color = new THREE.Color(),
 }: {
   name: string;
   position: Vector3;
   rotation: Rotation;
   url: string;
-  color?: THREE.Color;
 }) => {
   const imageRef = useRef<THREE.Mesh>(null);
   const frameRef = useRef<THREE.Mesh>(null);
@@ -167,13 +163,12 @@ const Frame = ({
     const imageMaterial = image.material as any;
     const frameMaterial = frameRef.current!.material as THREE.MeshBasicMaterial;
 
-    imageMaterial.zoom =
-      2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
+    imageMaterial.zoom = 2 + Math.sin(rnd * 10000 + state.clock.elapsedTime / 3) / 2;
 
-    const [scaleX, scaleY] = hover ? [0.85, 0.905] : [1, 1];
-    easing.damp3(image.scale, [0.85 * scaleX, 0.9 * scaleY, 1], 0.1, dt);
+    const scale = hover ? 0.9 : 1;
+    easing.damp3(image.scale, [0.8 * scale, 0.9 * scale, 1], 0.1, dt);
 
-    const color = hover ? "orange" : "white";
+    const color = hover ? "silver" : "white";
     easing.dampC(frameMaterial.color, color, 0.1, dt);
   });
 
@@ -192,27 +187,12 @@ const Frame = ({
         }}
       >
         <boxGeometry />
-        <meshStandardMaterial
-          color="#151515"
-          metalness={0.5}
-          roughness={0.5}
-          envMapIntensity={2}
-        />
-        <mesh
-          ref={frameRef}
-          scale={[0.9, 0.94, 0.9]}
-          position={[0, 0, 0.2]}
-          raycast={() => null}
-        >
+        <meshStandardMaterial color="#151515" metalness={0.5} roughness={0.5} envMapIntensity={2} />
+        <mesh ref={frameRef} scale={[0.9, 0.94, 0.9]} position={[0, 0, 0.2]} raycast={() => null}>
           <boxGeometry />
           <meshBasicMaterial toneMapped={false} fog={false} />
         </mesh>
-        <Image
-          ref={imageRef}
-          position={[0, 0, 0.7]}
-          url={url}
-          raycast={() => null}
-        />
+        <Image ref={imageRef} position={[0, 0, 0.7]} url={url} raycast={() => null} />
       </mesh>
       <Text
         maxWidth={0.1}

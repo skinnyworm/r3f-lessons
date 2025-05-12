@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  Environment,
-  MeshReflectorMaterial,
-  OrbitControls,
-} from "@react-three/drei";
+import { Environment, MeshReflectorMaterial, OrbitControls } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Frames } from "./frames";
 
