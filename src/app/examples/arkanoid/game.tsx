@@ -82,22 +82,33 @@ const Ball = () => {
   );
 };
 
-const Paddle = () => {
+const Paddle = ({
+  quaternion = new THREE.Quaternion(),
+  euler = new THREE.Euler(),
+}: {
+  quaternion?: THREE.Quaternion;
+  euler?: THREE.Euler;
+}) => {
   const bodyRef = useRef<RapierRigidBody>(null);
-  const [sub, get] = useKeyboardControls<Controls>();
+  const [, get] = useKeyboardControls<Controls>();
 
   useFrame((state, dt) => {
     const { viewport } = state;
     const body = bodyRef.current!;
 
-    const offset = get().left ? -1 : get().right ? 1 : 0;
-    const x = (body.translation().x += offset * 10 * dt);
+    const dir = get().left ? -1 : get().right ? 1 : 0;
+    const x = (body.translation().x += dir * 10 * dt);
 
     body.setTranslation({ x, y: -viewport.height / 3, z: 0 }, false);
 
-    const quaternion = new THREE.Quaternion();
-    quaternion.setFromEuler(new THREE.Euler(0, 0, (x * Math.PI) / 60));
+    // Rotate the paddle on z axis based on the x position
+    quaternion.setFromEuler(euler.set(0, 0, (x * Math.PI) / 60));
     body.setRotation(quaternion, false);
+
+    // Rotate the camera based on the x position
+    const camera = state.camera;
+    console.log(state.pointer.x);
+    camera.position.set(state.pointer.x * 2, state.pointer.y * 3, camera.position.z);
   });
 
   return (
