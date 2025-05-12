@@ -21,6 +21,11 @@ const examples = [
     description: "Env map example.",
     href: "/examples/env-map",
   },
+  {
+    title: "Arkanoid",
+    description: "Simple Arkanoid game.",
+    href: "/examples/arkanoid",
+  },
 ];
 
 const tutorials = [

@@ -1,27 +1,45 @@
 "use client";
 
-import { Canvas, Color, useThree, Vector3 } from "@react-three/fiber";
-import { CuboidCollider, Physics, RapierRigidBody, RigidBody } from "@react-three/rapier";
-import { Fragment, useRef } from "react";
+import { KeyboardControls, KeyboardControlsEntry, useKeyboardControls } from "@react-three/drei";
+import { Canvas, Color, useFrame, useThree, Vector3 } from "@react-three/fiber";
+import { CuboidCollider, Physics, quat, RapierRigidBody, RigidBody } from "@react-three/rapier";
+import { Fragment, useMemo, useRef } from "react";
+import * as THREE from "three";
 
-export const Grame = () => {
+enum Controls {
+  left = "left",
+  right = "right",
+}
+
+export const Game = () => {
+  const map = useMemo<KeyboardControlsEntry<Controls>[]>(
+    () => [
+      { name: Controls.left, keys: ["ArrowLeft", "KeyA"] },
+      { name: Controls.right, keys: ["ArrowRight", "KeyD"] },
+    ],
+    []
+  );
+
   return (
-    <Canvas camera={{ fov: 50, position: [0, 5, 12] }}>
-      <ambientLight intensity={0.5} />
-      <pointLight position={[10, 10, 5]} />
-      <Physics gravity={[0, -30, 0]}>
-        <Enemy color="orange" position={[2.75, 1.5, 0]} />
-        <Enemy color="hotpink" position={[-2.75, 3.5, 0]} />
-        <Ball />
-        <Paddle />
-      </Physics>
-    </Canvas>
+    <KeyboardControls map={map}>
+      <Canvas camera={{ fov: 50, position: [0, 0, 12] }}>
+        <color attach="background" args={["#000000"]} />
+        <ambientLight intensity={0.5} />
+        <pointLight position={[0, 5, 2.5]} intensity={20} />
+        <Physics gravity={[0, -30, 0]}>
+          <Enemy color="orange" position={[2.75, 1.5, 0]} />
+          <Enemy color="hotpink" position={[-2.75, 3.5, 0]} />
+          <Ball />
+          <Paddle />
+        </Physics>
+      </Canvas>
+    </KeyboardControls>
   );
 };
 
 const Enemy = ({ position, color }: { position: Vector3; color: Color }) => {
   return (
-    <RigidBody colliders="cuboid" type="fixed" position={position} restitution={2.1}>
+    <RigidBody colliders="cuboid" type="fixed" position={position} restitution={1.1}>
       <mesh>
         <boxGeometry args={[2.5, 1, 1]} />
         <meshStandardMaterial color={color} />
@@ -43,7 +61,7 @@ const Ball = () => {
     <Fragment>
       <RigidBody ref={ref} colliders="ball" mass={1}>
         <mesh>
-          <sphereGeometry args={[0.75, 32, 32]} />
+          <sphereGeometry args={[0.5, 32, 32]} />
           <meshStandardMaterial color="white" />
         </mesh>
       </RigidBody>
@@ -54,6 +72,10 @@ const Ball = () => {
         restitution={2.1}
         onCollisionEnter={onCollisionEnter}
       >
+        <mesh>
+          <boxGeometry args={[60, 2, 60]} />
+          <meshStandardMaterial color="blue" />
+        </mesh>
         <CuboidCollider args={[30, 2, 30]} />
       </RigidBody>
     </Fragment>
@@ -61,5 +83,29 @@ const Ball = () => {
 };
 
 const Paddle = () => {
-  return null;
+  const bodyRef = useRef<RapierRigidBody>(null);
+  const [sub, get] = useKeyboardControls<Controls>();
+
+  useFrame((state, dt) => {
+    const { viewport } = state;
+    const body = bodyRef.current!;
+
+    const offset = get().left ? -1 : get().right ? 1 : 0;
+    const x = (body.translation().x += offset * 10 * dt);
+
+    body.setTranslation({ x, y: -viewport.height / 3, z: 0 }, false);
+
+    const quaternion = new THREE.Quaternion();
+    quaternion.setFromEuler(new THREE.Euler(0, 0, (x * Math.PI) / 60));
+    body.setRotation(quaternion, false);
+  });
+
+  return (
+    <RigidBody ref={bodyRef} colliders="cuboid" type="fixed" restitution={2.1}>
+      <mesh>
+        <boxGeometry args={[4, 0.2, 1]} />
+        <meshStandardMaterial color="lightblue" />
+      </mesh>
+    </RigidBody>
+  );
 };
