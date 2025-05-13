@@ -26,6 +26,11 @@ const examples = [
     description: "Simple Arkanoid game.",
     href: "/examples/arkanoid",
   },
+  {
+    title: "Pinball",
+    description: "Simple Pinball game.",
+    href: "/examples/pinball",
+  },
 ];
 
 const tutorials = [
