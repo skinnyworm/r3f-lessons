@@ -1,9 +1,9 @@
-import { Minecraft } from "@/components/minecraft/minecraft";
+import { Game } from "./game";
 
 export default function MinecraftPage() {
   return (
     <div className="w-full h-svh">
-      <Minecraft />
+      <Game />
     </div>
   );
 }

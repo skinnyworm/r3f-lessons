@@ -1,18 +1,11 @@
 "use client";
-
-import {
-  Helper,
-  KeyboardControls,
-  KeyboardControlsEntry,
-  PointerLockControls,
-  Sky,
-} from "@react-three/drei";
+import { KeyboardControls, KeyboardControlsEntry, PointerLockControls, Sky } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/rapier";
-import { PointLightHelper } from "three";
-import { Cube, Cubes } from "./cube";
 import { Ground } from "./ground";
 import { Player } from "./player";
+import { Cube } from "./cube";
+import { useCubeStore } from "./useCubeStore";
 
 const keymap: KeyboardControlsEntry<string>[] = [
   { name: "forward", keys: ["w", "ArrowUp"] },
@@ -27,7 +20,8 @@ const keymap: KeyboardControlsEntry<string>[] = [
   { name: "inventory", keys: ["i"] },
   { name: "chat", keys: ["t"] },
 ];
-export function Minecraft() {
+
+export function Game() {
   return (
     <>
       <KeyboardControls map={keymap}>
@@ -36,12 +30,10 @@ export function Minecraft() {
           <ambientLight intensity={3} />
           <pointLight position={[0, 2, 2]} intensity={50} castShadow />
           <Physics gravity={[0, -30, 0]}>
-            <Cube position={[0, 0.5, -3]} />
-            <Cubes />
-            <Ground />
             <Player />
+            <Ground />
+            <Cubes />
           </Physics>
-          <Helper type={PointLightHelper} args={[10, "red"]} />
           <PointerLockControls />
         </Canvas>
       </KeyboardControls>
@@ -49,3 +41,8 @@ export function Minecraft() {
     </>
   );
 }
+
+const Cubes = () => {
+  const { cubes } = useCubeStore();
+  return cubes.map((pos, i) => <Cube key={i} position={[pos.x, pos.y, pos.z]} />);
+};
