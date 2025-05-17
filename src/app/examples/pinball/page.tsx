@@ -1,3 +1,4 @@
+import { lstat } from "fs";
 import { Game } from "./game";
 
 export default function EnvMapPage() {
