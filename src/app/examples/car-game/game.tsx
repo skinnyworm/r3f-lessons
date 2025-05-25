@@ -1,21 +1,15 @@
 "use client";
 
-import { Canvas, useFrame } from "@react-three/fiber";
-import { Car } from "./car";
-import {
-  Environment,
-  KeyboardControls,
-  KeyboardControlsEntry,
-  OrbitControls,
-  useKeyboardControls,
-} from "@react-three/drei";
-import { euler, Physics, quat, RapierRigidBody, RigidBody, vec3 } from "@react-three/rapier";
-import { useControls } from "leva";
-import { useRef } from "react";
+import { Environment, KeyboardControls, KeyboardControlsEntry, OrbitControls } from "@react-three/drei";
+import { Canvas, Vector3 } from "@react-three/fiber";
+import { Physics, RigidBody } from "@react-three/rapier";
+import { CarControl } from "./car-control";
 
 const keymap: KeyboardControlsEntry<string>[] = [
   { name: "left", keys: ["a", "ArrowLeft"] },
   { name: "right", keys: ["d", "ArrowRight"] },
+  { name: "forward", keys: ["w", "ArrowUp"] },
+  { name: "backward", keys: ["s", "ArrowDown"] },
 ];
 
 export function Game() {
@@ -23,15 +17,16 @@ export function Game() {
     <KeyboardControls map={keymap}>
       <Canvas shadows camera={{ position: [4.2, 1.5, 7.5], fov: 45, near: 0.5 }}>
         <color attach="background" args={["#333"]} />
-        <ambientLight intensity={0.5} />
+        <ambientLight intensity={0.1} />
         <directionalLight
-          position={[0, 10, 0]}
-          intensity={1.5}
+          position={[4, 15, -4]}
+          intensity={1}
           castShadow
           shadow-mapSize-width={1024}
           shadow-mapSize-height={1024}
         />
         <Experience />
+        <Environment preset="city" background={false} environmentIntensity={0.2} />
       </Canvas>
     </KeyboardControls>
   );
@@ -41,6 +36,8 @@ function Experience() {
   return (
     <Physics>
       <CarControl />
+      <Building position={[3, 0, 3]} />
+      <Building position={[-3, 0, 3]} />
       <Ground />
       <OrbitControls />
     </Physics>
@@ -58,53 +55,13 @@ const Ground = () => {
   );
 };
 
-const CarControl = () => {
-  const rb = useRef<RapierRigidBody>(null);
-  const [, get] = useKeyboardControls();
-
-  const { rotationSpeed, carSpeed } = useControls({
-    carSpeed: {
-      value: 3,
-      min: -20,
-      max: 20,
-      step: 0.1,
-    },
-    rotationSpeed: {
-      value: 3,
-      min: 0,
-      max: 10,
-      step: 0.01,
-    },
-  });
-
-  useFrame((state, delta) => {
-    if (!rb.current) return;
-
-    const { left, right } = get();
-    const dir = Number(left) - Number(right);
-
-    // angleVelocity
-
-    const angleVelocity = rb.current.angvel();
-    const angle = Math.PI * (90 / 180);
-    angleVelocity.y = -dir * Math.sin(angle) * rotationSpeed;
-
-    const rotation = rb.current.rotation();
-    const impulse = vec3({
-      x: 0,
-      y: 0,
-      z: carSpeed * delta * -1,
-    });
-    const eulerRot = euler().setFromQuaternion(quat(rotation));
-    impulse.applyEuler(eulerRot);
-
-    rb.current.applyImpulse(impulse, true);
-    rb.current.setAngvel(angleVelocity, true);
-  });
-
+const Building = ({ position }: { position: Vector3 }) => {
   return (
-    <RigidBody ref={rb} colliders="trimesh" position={[0, 1, 0]}>
-      <Car model="sedan" position={[0, 0, 0]} />
+    <RigidBody type="fixed" colliders="cuboid" position={position}>
+      <mesh position={[0, 3, 0]} castShadow>
+        <boxGeometry args={[2, 6, 2]} />
+        <meshStandardMaterial color="white" />
+      </mesh>
     </RigidBody>
   );
 };

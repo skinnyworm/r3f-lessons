@@ -34,7 +34,7 @@ export const Car = ({ model = CAR_MODELS[0], ...props }) => {
   }, [scene]);
   return (
     <group {...props}>
-      <Clone object={scene} rotation-y={Math.PI} castShadow />
+      <Clone object={scene} castShadow />
     </group>
   );
 };
