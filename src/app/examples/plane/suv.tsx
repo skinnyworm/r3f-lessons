@@ -90,10 +90,10 @@ export function Suv({
         type="dynamic"
         colliders="hull"
         mass={1}
-        restitution={1}
+        restitution={0.2}
         friction={0.3}
-        linearDamping={0.8}
-        angularDamping={0.2}
+        linearDamping={0.2}
+        angularDamping={0.1}
         position={initialPosition}
       >
         <group>

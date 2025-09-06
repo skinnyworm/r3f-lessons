@@ -1,9 +1,17 @@
 "use client";
 
+<<<<<<< Updated upstream
 import { Environment, KeyboardControls, KeyboardControlsEntry, OrbitControls } from "@react-three/drei";
 import { Canvas, Vector3 } from "@react-three/fiber";
 import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
 import { CarControl } from "./car-control";
+=======
+import { KeyboardControls, KeyboardControlsEntry, OrbitControls } from "@react-three/drei";
+import { Canvas } from "@react-three/fiber";
+import { Physics } from "@react-three/rapier";
+import { CarControl } from "./car-controller";
+import { Ground } from "./ground";
+>>>>>>> Stashed changes
 
 const keymap: KeyboardControlsEntry<string>[] = [
   { name: "left", keys: ["a", "ArrowLeft"] },
@@ -34,7 +42,11 @@ export function Game() {
 
 function Experience() {
   return (
+<<<<<<< Updated upstream
     <Physics debug>
+=======
+    <Physics debug={true} gravity={[0, -9.81, 0]}>
+>>>>>>> Stashed changes
       <CarControl />
       <Building position={[3, 0, 3]} />
       <Building position={[-3, 0, 3]} />
@@ -43,6 +55,7 @@ function Experience() {
     </Physics>
   );
 }
+<<<<<<< Updated upstream
 
 const Ground = () => {
   return (
@@ -70,3 +83,5 @@ const Building = ({ position }: { position: Vector3 }) => {
     </RigidBody>
   );
 };
+=======
+>>>>>>> Stashed changes

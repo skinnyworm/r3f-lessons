@@ -19,6 +19,7 @@ export const GuidedMissileWithPropotionalNavigation = ({
   thrust?: number; // forward acceleration (m/s²)
   initialVelocity?: Vector3Tuple;
 }) => {
+  const maxPoints = 500;
   const turnRate = 0.2;
   const missileRef = useRef<RapierRigidBody>(null!);
   const targetRef = useRef<RapierRigidBody>(null!);
@@ -29,7 +30,6 @@ export const GuidedMissileWithPropotionalNavigation = ({
   const [, get] = useKeyboardControls();
   const [drawCount, setDrawCount] = useState(0);
   const [positions] = useState(() => new Float32Array(maxPoints * 3));
-  const maxPoints = 500;
   useFrame((state, delta) => {
     if (!missileRef.current) return;
 
@@ -95,18 +95,18 @@ export const GuidedMissileWithPropotionalNavigation = ({
 
     // draw line
 
-    const line = lineRef.current;
+    // const line = lineRef.current;
 
-    if (drawCount >= maxPoints) {
-      positions.copyWithin(0, 3);
-      positions.set([missilePos.x, missilePos.y, missilePos.z], (maxPoints - 1) * 3);
-    } else {
-      positions.set([missilePos.x, missilePos.y, missilePos.z], drawCount * 3);
-      setDrawCount(drawCount + 1);
-    }
+    // if (drawCount >= maxPoints) {
+    //   positions.copyWithin(0, 3);
+    //   positions.set([missilePos.x, missilePos.y, missilePos.z], (maxPoints - 1) * 3);
+    // } else {
+    //   positions.set([missilePos.x, missilePos.y, missilePos.z], drawCount * 3);
+    //   setDrawCount(drawCount + 1);
+    // }
 
-    lineRef.current.geometry.setDrawRange(0, Math.min(drawCount, maxPoints));
-    lineRef.current.geometry.attributes.position.needsUpdate = true;
+    // lineRef.current.geometry.setDrawRange(0, Math.min(drawCount, maxPoints));
+    // lineRef.current.geometry.attributes.position.needsUpdate = true;
   });
 
   return (
@@ -138,15 +138,11 @@ export const GuidedMissileWithPropotionalNavigation = ({
         ref={targetRef}
         position={target}
         colliders="cuboid"
-        linearVelocity={[-3, 2, -1]}
+        linearVelocity={[0, 3, 0]}
         gravityScale={0}
       >
         <TargetMesh />
       </RigidBody>
-      <line ref={lineRef}>
-        <bufferGeometry />
-        <lineBasicMaterial color="orange" linewidth={2} />
-      </line>
     </group>
   );
 };

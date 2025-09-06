@@ -55,9 +55,9 @@ export function Experience() {
       </directionalLight>
       <Environment preset="city" background={false} environmentIntensity={0.2} />
       <Physics>
-        {/* <Missile start={[-20, 5, -20]} target={[20, 2, 20]} /> */}
-        {/* <Suv initialPosition={[-20, 1, -20]} targetPosition={targetPosition} /> */}
-        <Plane initialPosition={[0, 20, 0]} />
+        <Missile start={[-20, 5, -20]} target={[20, 2, 20]} />
+        {/* <Suv initialPosition={[-20, 3, -20]} targetPosition={targetPosition} /> */}
+        {/* <Plane initialPosition={[0, 20, 0]} /> */}
         <Ground onPick={(point) => setTargetPosition(point.toArray())} />
         <OrbitControls />
       </Physics>
