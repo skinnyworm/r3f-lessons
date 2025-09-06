@@ -36,6 +36,11 @@ const examples = [
     description: "Racing simulation game",
     href: "/examples/car-game",
   },
+  {
+    title: "Plane",
+    description: "Plane simulation",
+    href: "/examples/plane",
+  },
 ];
 
 const tutorials = [

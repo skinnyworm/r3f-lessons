@@ -2,7 +2,7 @@
 
 import { Environment, KeyboardControls, KeyboardControlsEntry, OrbitControls } from "@react-three/drei";
 import { Canvas, Vector3 } from "@react-three/fiber";
-import { Physics, RigidBody } from "@react-three/rapier";
+import { CuboidCollider, Physics, RigidBody } from "@react-three/rapier";
 import { CarControl } from "./car-control";
 
 const keymap: KeyboardControlsEntry<string>[] = [
@@ -34,7 +34,7 @@ export function Game() {
 
 function Experience() {
   return (
-    <Physics>
+    <Physics debug>
       <CarControl />
       <Building position={[3, 0, 3]} />
       <Building position={[-3, 0, 3]} />
@@ -46,12 +46,17 @@ function Experience() {
 
 const Ground = () => {
   return (
-    <RigidBody type="fixed" colliders="cuboid">
-      <mesh position={[0, -0.1, 0]} rotation={[0, Math.PI / 4, 0]} receiveShadow>
-        <boxGeometry args={[50, 0.2, 50]} />
-        <meshStandardMaterial color="orange" />
-      </mesh>
-    </RigidBody>
+    <>
+      <RigidBody type="fixed" colliders="cuboid">
+        <mesh position={[0, -0.1, 0]} receiveShadow>
+          <boxGeometry args={[50, 0.2, 50]} />
+          <meshStandardMaterial color="orange" />
+        </mesh>
+      </RigidBody>
+      <RigidBody name="void" type="fixed" colliders={false} sensor>
+        <CuboidCollider args={[100, 0.2, 100]} position={[0, -2, 0]} />
+      </RigidBody>
+    </>
   );
 };
 
